@@ -8,6 +8,7 @@ WHITE = (255, 255, 255)
 GREEN = (0, 200, 0)
 RED = (220, 60, 60)
 
+
 class GameEngine:
     def __init__(self, width, height):
         self.width = width
@@ -81,7 +82,19 @@ class GameEngine:
         score_text = self.font.render(f"Score: {self.score}", True, WHITE)
         screen.blit(score_text, (10, 10))
 
-        if self.game_over and not self._game_over_logged:
-            # NOTE: no proper game-over screen yet - see Task 2 in the README.
-            print("Game over! Final score:", self.score)
-            self._game_over_logged = True
+        if self.game_over:
+            game_over_font = pygame.font.SysFont("Arial", 60)
+            score_font = pygame.font.SysFont("Arial", 36)
+
+            game_over_text = game_over_font.render("GAME OVER", True, WHITE)
+            score_text = score_font.render(f"Final Score: {self.score}", True, WHITE)
+
+            game_over_rect = game_over_text.get_rect(
+                center=(self.width // 2, self.height // 2 - 40)
+            )
+            score_rect = score_text.get_rect(
+                center=(self.width // 2, self.height // 2 + 30)
+            )
+
+            screen.blit(game_over_text, game_over_rect)
+            screen.blit(score_text, score_rect)
