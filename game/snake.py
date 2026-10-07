@@ -1,5 +1,6 @@
 import pygame
 
+
 class Snake:
     def __init__(self, x, y, cell_size):
         self.cell_size = cell_size
@@ -9,8 +10,12 @@ class Snake:
         self.grow_pending = False
 
     def set_direction(self, dx, dy):
-        # NOTE: does not currently guard against reversing directly
-        # into the segment behind the head.
+        current_dx, current_dy = self.direction
+
+        # Prevent an immediate 180-degree reversal
+        if (dx, dy) == (-current_dx, -current_dy):
+            return
+
         self.direction = (dx, dy)
 
     def move(self):
@@ -29,11 +34,15 @@ class Snake:
 
     def head_rect(self):
         x, y = self.body[0]
-        return pygame.Rect(x * self.cell_size, y * self.cell_size, self.cell_size, self.cell_size)
+        return pygame.Rect(
+            x * self.cell_size, y * self.cell_size, self.cell_size, self.cell_size
+        )
 
     def segment_rects(self):
         return [
-            pygame.Rect(x * self.cell_size, y * self.cell_size, self.cell_size, self.cell_size)
+            pygame.Rect(
+                x * self.cell_size, y * self.cell_size, self.cell_size, self.cell_size
+            )
             for (x, y) in self.body
         ]
 
