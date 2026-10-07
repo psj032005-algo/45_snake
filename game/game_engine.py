@@ -23,6 +23,9 @@ class GameEngine:
         self.score = 0
         self.font = pygame.font.SysFont("Arial", 30)
 
+        self.eat_sound = pygame.mixer.Sound("sounds/Food.mp3")
+        self.game_over_sound = pygame.mixer.Sound("sounds/Gameover.mp3")
+
         self.moves_per_second = 8
         self.difficulty = "Medium"
         self._frame_counter = 0
@@ -81,15 +84,18 @@ class GameEngine:
 
         if self.snake.collides_with_wall(self.grid_width, self.grid_height):
             self.game_over = True
+            self.game_over_sound.play()
             return
 
         if self.snake.collides_with_self():
             self.game_over = True
+            self.game_over_sound.play()
             return
 
         if self.snake.head_rect().colliderect(self.food.rect()):
             self.snake.grow()
             self.score += 1
+            self.eat_sound.play()
             self.food.respawn(self.snake.body)
 
     def render(self, screen):
