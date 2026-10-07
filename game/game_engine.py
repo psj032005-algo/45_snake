@@ -24,13 +24,35 @@ class GameEngine:
         self.font = pygame.font.SysFont("Arial", 30)
 
         self.moves_per_second = 8
+        self.difficulty = "Medium"
         self._frame_counter = 0
 
         self.game_over = False
         self._game_over_logged = False
 
+    def reset(self):
+        self.snake = Snake(self.grid_width // 2, self.grid_height // 2, self.cell_size)
+        self.food = Food(self.grid_width, self.grid_height, self.cell_size)
+        self.score = 0
+        self._frame_counter = 0
+        self.game_over = False
+        self._game_over_logged = False
+
+        self.set_difficulty(self.difficulty)
+
+    def set_difficulty(self, difficulty):
+        speeds = {"Easy": 5, "Medium": 8, "Hard": 12}
+
+        if difficulty in speeds:
+            self.difficulty = difficulty
+            self.moves_per_second = speeds[difficulty]
+
     def handle_keydown(self, key):
-        # Direction changes are applied immediately on key press.
+        if self.game_over:
+            if key == pygame.K_r:
+                self.reset()
+            return
+
         if key in (pygame.K_UP, pygame.K_w):
             self.snake.set_direction(0, -1)
         elif key in (pygame.K_DOWN, pygame.K_s):
@@ -98,3 +120,30 @@ class GameEngine:
 
             screen.blit(game_over_text, game_over_rect)
             screen.blit(score_text, score_rect)
+
+            if self.game_over:
+                game_over_font = pygame.font.SysFont("Arial", 60)
+                score_font = pygame.font.SysFont("Arial", 36)
+
+                game_over_text = game_over_font.render("GAME OVER", True, WHITE)
+                score_text = score_font.render(
+                    f"Final Score: {self.score}", True, WHITE
+                )
+
+                game_over_rect = game_over_text.get_rect(
+                    center=(self.width // 2, self.height // 2 - 40)
+                )
+                score_rect = score_text.get_rect(
+                    center=(self.width // 2, self.height // 2 + 30)
+                )
+
+                screen.blit(game_over_text, game_over_rect)
+                screen.blit(score_text, score_rect)
+
+                replay_text = score_font.render("Press R to Replay", True, WHITE)
+
+                replay_rect = replay_text.get_rect(
+                    center=(self.width // 2, self.height // 2 + 80)
+                )
+
+                screen.blit(replay_text, replay_rect)
